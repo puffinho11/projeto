@@ -22,6 +22,6 @@ app.get('/metrics', async (req,res) =>{
     res.end(await client.register.metrics())
 });
 
-app.listen(300, () => {
+app.listen(3000, () => {
     console.log("App running on port 3000");
 });
