@@ -1,0 +1,113 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body, #root { height: 100%; }
+body {
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;
+  color: #e5e7eb;                   /* cinza claro */
+  background: radial-gradient(1200px 800px at 80% -10%, #3b82f6 0%, transparent 60%),
+              radial-gradient(1000px 600px at 0% -10%, #8b5cf6 0%, transparent 60%),
+              linear-gradient(180deg, #0b1220 0%, #0a0f1f 100%);
+}
+
+.navbar {
+  position: sticky; top: 0; z-index: 10;
+  backdrop-filter: blur(8px);
+  background: rgba(10, 15, 31, 0.6);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+}
+.navbar-inner {
+  max-width: 1080px; margin: 0 auto; padding: 14px 20px;
+  display: flex; align-items: center; gap: 18px;
+}
+.brand {
+  font-weight: 700; letter-spacing: .2px;
+  background: linear-gradient(90deg,#60a5fa,#a78bfa,#22d3ee);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.nav-links { margin-left: auto; display: flex; gap: 10px; }
+.nav-link {
+  text-decoration: none; color: #cbd5e1; font-weight: 600; font-size: 14px;
+  padding: 8px 12px; border-radius: 10px; transition: .2s ease;
+}
+.nav-link:hover { color: #fff; background: rgba(148,163,184,.12); }
+
+.page {
+  min-height: calc(100dvh - 56px);
+  display: grid; place-items: center; padding: 32px 16px;
+}
+.container {
+  width: 100%; max-width: 1080px; margin: 0 auto;
+}
+
+.card {
+  width: 100%; max-width: 460px;
+  background: rgba(2,6,23,0.6);
+  border: 1px solid rgba(148,163,184,0.15);
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.45);
+  backdrop-filter: blur(8px);
+}
+.card h1 { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+.card p  { font-size: 14px; color: #9ca3af; margin-bottom: 16px; }
+
+.field { display: grid; gap: 6px; margin-bottom: 14px; }
+.label { font-size: 13px; color: #cbd5e1; }
+.input, .select {
+  width: 100%; padding: 12px 14px; border-radius: 12px;
+  background: rgba(15,23,42,.6); color: #e5e7eb;
+  border: 1px solid rgba(148,163,184,.18);
+  outline: none; transition: border-color .2s, box-shadow .2s, transform .03s;
+}
+.input::placeholder { color: #94a3b8; }
+.input:focus, .select:focus {
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 4px rgba(59,130,246,.2);
+}
+.input:active { transform: translateY(0.5px); }
+
+.btn-row { display: flex; gap: 10px; margin-top: 4px; }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 8px; padding: 10px 14px; border-radius: 12px; border: 0;
+  background: linear-gradient(90deg,#3b82f6,#8b5cf6);
+  color: #fff; font-weight: 700; cursor: pointer; transition: transform .05s, filter .2s, box-shadow .2s;
+  box-shadow: 0 8px 20px rgba(59,130,246,.25);
+}
+.btn:hover { filter: brightness(1.05); box-shadow: 0 10px 26px rgba(59,130,246,.35); }
+.btn:active { transform: translateY(1px); }
+.btn.secondary {
+  background: transparent; color: #cbd5e1; font-weight: 700;
+  border: 1px solid rgba(148,163,184,.22);
+}
+.btn.secondary:hover { background: rgba(148,163,184,.10); }
+
+.kpis {
+  display: grid; grid-template-columns: repeat(12,1fr); gap: 14px; margin-top: 16px;
+}
+.kpi {
+  grid-column: span 12;
+  background: rgba(2,6,23,0.6);
+  border: 1px solid rgba(148,163,184,0.15);
+  border-radius: 14px; padding: 16px;
+}
+@media (min-width: 640px) { .kpi { grid-column: span 6; } }
+@media (min-width: 1024px){ .kpi { grid-column: span 3; } }
+.kpi .value { font-size: 28px; font-weight: 800; color: #fff; }
+.kpi .label { font-size: 12px; color: #9ca3af; }
+
+.panel {
+  margin-top: 16px;
+  background: rgba(2,6,23,0.6);
+  border: 1px solid rgba(148,163,184,0.15);
+  border-radius: 14px; padding: 16px;
+}
+.panel h2 { font-size: 16px; font-weight: 800; margin-bottom: 10px; }
+.list { display: grid; gap: 8px; }
+.list-item {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 12px; border: 1px solid rgba(148,163,184,.12); border-radius: 12px;
+  background: rgba(10,15,31,.5);
+}
+
+.center { text-align: center; }
+.mtop { margin-top: 18px; }
