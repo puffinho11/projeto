@@ -8,13 +8,18 @@ collectDefaultMetrics()
 
 const requestCounter = new client.Counter({
   name: 'app_requests_total',
-  help: 'Contador de requisições recebidas pela aplicação'
+  help: 'Número total de requisições recebidas pela aplicação',
+})
+
+const successfulLogins = new client.Counter({
+  name: 'app_successful_logins_total',
+  help: 'Número total de logins bem-sucedidos simulados',
 })
 
 const responseTimeHistogram = new client.Histogram({
   name: 'app_response_time_seconds',
-  help: 'Histograma do tempo de resposta das requisições em segundos',
-  buckets: [0.1, 0.3, 0.5, 1, 2, 5]
+  help: 'Tempo de resposta das requisições em segundos',
+  buckets: [0.1, 0.3, 0.5, 1, 2, 5],
 })
 
 app.use((req, res, next) => {
@@ -27,8 +32,17 @@ app.use((req, res, next) => {
 
 app.get('/', (req, res) => {
   requestCounter.inc()
-  res.send('Aplicação com Prometheus + Grafana + NGINX + Kubernetes');
-});
+  res.send('Aplicação com Prometheus, Grafana e NGINX rodando no Kubernetes!')
+})
+
+app.get('/login', (req, res) => {
+  successfulLogins.inc()
+  res.send('Login realizado com sucesso!')
+})
+
+app.get('/Login', (req, res) => {
+  res.redirect('/login')
+})
 
 app.get('/metrics', async (req, res) => {
   res.set('Content-Type', client.register.contentType)
@@ -38,3 +52,4 @@ app.get('/metrics', async (req, res) => {
 app.listen(3000, () => {
   console.log('Aplicação rodando na porta 3000')
 })
+
