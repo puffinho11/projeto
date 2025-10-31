@@ -1,27 +1,22 @@
-# Etapa 1: build do frontend
-FROM node:20 AS build
+# Etapa 1: imagem base
+FROM node:20-alpine
 
-WORKDIR /app
+# Diretório de trabalho dentro do container
+WORKDIR /usr/src/app
+
+# Copiar package.json e package-lock.json
 COPY package*.json ./
 
-# Instala dependências
+# Instalar dependências
 RUN npm install
 
-# Copia o restante dos arquivos
+# Copiar todos os arquivos da aplicação (incluindo server.js)
 COPY . .
 
-# Gera o build do Vite
-RUN npm run build
+# Expor porta 3000
+EXPOSE 3000
 
-# Etapa 2: Servidor Nginx
-FROM nginx:alpine
+# Rodar o servidor
+CMD ["node", "server.js"]
 
-# Copia os arquivos de build do Vite para o diretório público do Nginx
-COPY --from=build /app/dist /usr/share/nginx/html
-
-# Expõe a porta 80
-EXPOSE 80
-
-# Comando padrão do Nginx
-CMD ["nginx", "-g", "daemon off;"]
 

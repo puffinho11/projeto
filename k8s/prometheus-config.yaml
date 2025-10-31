@@ -6,7 +6,20 @@ data:
   prometheus.yml: |
     global:
       scrape_interval: 5s
+
     scrape_configs:
+      # Coleta do backend (app principal)
+      - job_name: 'backend'
+        static_configs:
+          - targets: ['backend-service:3000']
+
+      # Coleta do monitor (caso exista outro container de métricas)
       - job_name: 'monitor'
         static_configs:
           - targets: ['monitor-service:3000']
+
+      # Coleta do Prometheus (auto-monitoramento)
+      - job_name: 'prometheus'
+        static_configs:
+          - targets: ['localhost:9090']
+
