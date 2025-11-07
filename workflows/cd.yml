@@ -1,0 +1,31 @@
+name: CD - Deploy no Minikube
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Clonar repositório
+        uses: actions/checkout@v4
+
+      - name: 🔧 Instalar kubectl e minikube
+        run: |
+          curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+          sudo install minikube /usr/local/bin/
+          minikube start --driver=docker
+          kubectl version --client
+
+      - name: 🚀 Aplicar manifests do Kubernetes
+        run: |
+          kubectl apply -f k8s/backend-deployment.yaml
+          kubectl apply -f k8s/backend-service.yaml
+          kubectl apply -f k8s/frontend-deployment.yaml
+          kubectl apply -f k8s/frontend-service.yaml
+          kubectl apply -f k8s/nginx-deployment.yaml
+          kubectl apply -f k8s/nginx-service.yaml
