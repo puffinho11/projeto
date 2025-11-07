@@ -1,0 +1,26 @@
+name: CD - Deploy no Railway
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clonar repositório
+        uses: actions/checkout@v3
+
+      - name: Instalar Railway CLI
+        run: |
+          curl -fsSL https://railway.app/install.sh | sh
+          echo "$HOME/.railway/bin" >> $GITHUB_PATH
+
+      - name: Login no Railway
+        run: railway login --token ${{ secrets.RAILWAY_TOKEN }}
+
+      - name: Deploy automático para o Railway
+        run: railway up --service projeto --environment production
+
