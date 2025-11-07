@@ -2,9 +2,6 @@ name: CD - Deploy no Minikube
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
 
 jobs:
   deploy:
@@ -12,20 +9,26 @@ jobs:
 
     steps:
       - name: 📥 Clonar repositório
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
-      - name: 🔧 Instalar kubectl e minikube
+      - name: ⚙️ Instalar kubectl
         run: |
-          curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
-          sudo install minikube /usr/local/bin/
-          minikube start --driver=docker
-          kubectl version --client
+          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+          sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
 
-      - name: 🚀 Aplicar manifests do Kubernetes
+      - name: 🔐 Configurar acesso ao Kubernetes
+        env:
+          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
         run: |
-          kubectl apply -f k8s/backend-deployment.yaml
-          kubectl apply -f k8s/backend-service.yaml
-          kubectl apply -f k8s/frontend-deployment.yaml
-          kubectl apply -f k8s/frontend-service.yaml
-          kubectl apply -f k8s/nginx-deployment.yaml
-          kubectl apply -f k8s/nginx-service.yaml
+          echo "$KUBE_CONFIG_DATA" | base64 --decode > kubeconfig.yaml
+          export KUBECONFIG=kubeconfig.yaml
+          kubectl cluster-info
+
+      - name: 🚀 Fazer deploy da nova imagem
+        run: |
+          kubectl set image deployment/monitor monitor=puff10/projeto:latest --namespace=default
+          kubectl rollout status deployment/monitor --namespace=default
+
+      - name: ✅ Verificar pods após o deploy
+        run: |
+          kubectl get pods -n default

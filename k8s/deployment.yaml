@@ -2,6 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: monitor
+  labels:
+    app: monitor
 spec:
   replicas: 1
   selector:
@@ -14,10 +16,13 @@ spec:
     spec:
       containers:
         - name: monitor
-          image: monitor:v1  
-          imagePullPolicy: Never    
+          # ✅ Usa imagem publicada no Docker Hub
+          image: puff10/projeto:latest
+          # ✅ Puxa imagem nova se não estiver presente localmente
+          imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 3000   
+            - containerPort: 3000
+ 
 
 
 
