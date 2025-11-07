@@ -10,17 +10,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Clonar repositório
+      - name: 🧩 Clonar repositório
         uses: actions/checkout@v3
 
-      - name: Instalar Railway CLI
+      - name: ⚙️ Instalar Railway CLI
         run: |
           curl -fsSL https://railway.app/install.sh | sh
           echo "$HOME/.railway/bin" >> $GITHUB_PATH
 
-      - name: Login no Railway
+      - name: 🔑 Login no Railway
         run: railway login --token ${{ secrets.RAILWAY_TOKEN }}
 
-      - name: Deploy automático para o Railway
+      - name: 🚀 Deploy automático para o Railway
         run: railway up --service projeto --environment production
+
+      - name: 🔍 Verificar logs e status
+        run: |
+          echo "Aguardando aplicação subir..."
+          sleep 15
+          railway logs --service projeto --lines 20
+          echo "✅ Deploy finalizado com sucesso!"
+
 
