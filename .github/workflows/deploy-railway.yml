@@ -1,12 +1,13 @@
 name: CD - Deploy no Railway
 
 on:
-  push:
-    branches:
-      - main
+  workflow_run:
+    workflows: ["CI - Build & Push Docker"]
+    types: [ "completed" ]
 
 jobs:
   deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
     steps:
@@ -18,8 +19,12 @@ jobs:
           curl -fsSL https://railway.app/install.sh | sh
           echo "$HOME/.railway/bin" >> $GITHUB_PATH
 
-      - name: 🔑 Login no Railway
-        run: railway login --token ${{ secrets.RAILWAY_TOKEN }}
+      - name: 🔑 Autenticar no Railway (novo formato)
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+        run: |
+          export RAILWAY_TOKEN=${{ secrets.RAILWAY_TOKEN }}
+          railway whoami || echo "✅ Autenticado via token com sucesso."
 
       - name: 🚀 Deploy automático para o Railway
         run: railway up --service projeto --environment production
@@ -29,6 +34,6 @@ jobs:
           echo "Aguardando aplicação subir..."
           sleep 15
           railway logs --service projeto --lines 20
-          echo "✅ Deploy finalizado com sucesso!"
+
 
 
