@@ -9,31 +9,22 @@ jobs:
   deploy:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
-
     steps:
-      - name: 🧩 Clonar repositório
-        uses: actions/checkout@v3
+      - name: Clonar repositório
+        uses: actions/checkout@v4
 
-      - name: ⚙️ Instalar Railway CLI
-        run: |
-          curl -fsSL https://railway.app/install.sh | sh
-          echo "$HOME/.railway/bin" >> $GITHUB_PATH
+      - name: Instalar Railway CLI
+        run: npm i -g @railway/cli
 
-      - name: 🔑 Autenticar no Railway (novo formato)
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-        run: |
-          export RAILWAY_TOKEN=${{ secrets.RAILWAY_TOKEN }}
-          railway whoami || echo "✅ Autenticado via token com sucesso."
+      - name: Autenticar no Railway
+        run: railway login --token ${{ secrets.RAILWAY_TOKEN }}
 
-      - name: 🚀 Deploy automático para o Railway
+      - name: Deploy automático para o Railway
         run: railway up --service projeto --environment production
 
-      - name: 🔍 Verificar logs e status
-        run: |
-          echo "Aguardando aplicação subir..."
-          sleep 15
-          railway logs --service projeto --lines 20
+      - name: Verificar logs e status
+        run: railway status
+
 
 
 
