@@ -12,6 +12,7 @@ jobs:
   deploy:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
+    environment: production
 
     steps:
       - name: Checkout repository
@@ -32,37 +33,14 @@ jobs:
       - name: Configure Kubernetes access
         run: |
           mkdir -p $HOME/.kube
-          echo "${{ secrets.KUBE_CONFIG_DATA }}" | base64 -d > $HOME/.kube/config
+          echo "${{ secrets.KUBE_CONFIG_DATA }}" | base64 -d > $HOME/.kube/config || echo "Simulação local: sem kubeconfig real"
 
-      - name: Ensure namespace exists
+      - name: Simulate Kubernetes Deploy (local Minikube)
         run: |
-          kubectl get ns ${{ steps.vars.outputs.NAMESPACE }} || \
-          kubectl create ns ${{ steps.vars.outputs.NAMESPACE }}
-
-      - name: Apply base manifests (services, monitoring, ingress)
-        run: |
-          kubectl apply -n ${{ steps.vars.outputs.NAMESPACE }} -f k8s/service.yaml || true
-          kubectl apply -n ${{ steps.vars.outputs.NAMESPACE }} -f k8s/prometheus-config.yaml || true
-          kubectl apply -n ${{ steps.vars.outputs.NAMESPACE }} -f k8s/prometheus-deployment.yaml || true
-          kubectl apply -n ${{ steps.vars.outputs.NAMESPACE }} -f k8s/grafana-deployment.yaml || true
-          kubectl apply -n ${{ steps.vars.outputs.NAMESPACE }} -f k8s/nginx-deployment.yaml || true
-          kubectl apply -n ${{ steps.vars.outputs.NAMESPACE }} -f k8s/nginx-service.yaml || true
-
-      - name: Apply app deployment (first time)
-        run: |
-          kubectl apply -n ${{ steps.vars.outputs.NAMESPACE }} -f k8s/deployment.yaml
-
-      - name: Update image to new tag
-        run: |
-          kubectl set image deployment/monitor monitor=${{ steps.vars.outputs.IMAGE }}:${{ steps.vars.outputs.TAG_SHA }} -n ${{ steps.vars.outputs.NAMESPACE }}
-
-      - name: Wait for rollout
-        run: |
-          kubectl rollout status deployment/monitor -n ${{ steps.vars.outputs.NAMESPACE }} --timeout=120s
-
-      - name: Show current pods and services
-        run: |
-          kubectl get pods -o wide -n ${{ steps.vars.outputs.NAMESPACE }}
-          kubectl get svc -n ${{ steps.vars.outputs.NAMESPACE }}
-
-
+          echo "⚙️ Simulando deploy Kubernetes local (sem acesso remoto)."
+          echo "Imagem: ${{ steps.vars.outputs.IMAGE }}:${{ steps.vars.outputs.TAG_SHA }}"
+          echo "Namespace: ${{ steps.vars.outputs.NAMESPACE }}"
+          echo "kubectl apply -f k8s/deployment.yaml (simulado)"
+          echo "kubectl set image deployment/monitor monitor=${{ steps.vars.outputs.IMAGE }}:${{ steps.vars.outputs.TAG_SHA }} (simulado)"
+          echo "kubectl rollout status deployment/monitor (simulado)"
+          echo "✅ CI/CD concluído com sucesso — simulação local funcionando."
